@@ -9,4 +9,5 @@ import java.util.UUID;
 public interface NoteRepository extends JpaRepository<Note, UUID> {
     List<Note> findByStepId(UUID stepId);
     List<Note> findByUserId(UUID userId);
+    List<Note> findByJourneyId(UUID journeyId);
 }

@@ -36,3 +36,11 @@ mvn spring-boot:run -Dspring-boot.run.profiles=postgres
 ```
 
 Make sure Postgres is running and the connection properties in `src/main/resources/application-postgres.properties` are correct before using the `postgres` profile.
+
+To run against MySQL and apply MySQL-compatible Flyway migrations, start the application with the `mysql` profile:
+
+```powershell
+mvn spring-boot:run -Dspring-boot.run.profiles=mysql
+```
+
+Ensure MySQL is running and the connection properties in `src/main/resources/application-mysql.properties` are correct before using the `mysql` profile.

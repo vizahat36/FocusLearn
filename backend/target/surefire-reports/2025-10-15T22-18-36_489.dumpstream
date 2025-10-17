@@ -1,5 +1,0 @@
-# Created at 2025-10-15T22:18:37.010
-Boot Manifest-JAR contains absolute paths in classpath 'E:\Coplit-test\FocusLearn\backend\target\test-classes'
-Hint: <argLine>-Djdk.net.URLClassPath.disableClassPathURLCheck=true</argLine>
-'other' has different root
-

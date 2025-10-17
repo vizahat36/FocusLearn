@@ -40,6 +40,27 @@ const NotesPanel: React.FC<{ journeyId?: string; stepId?: string; getCurrentTime
     setNotes(prev => prev.filter(n => n.id !== id));
   };
 
+  const exportNotes = async () => {
+    if (!journeyId) return;
+    const res = await notesApi.list({ journeyId });
+    // fallback: call backend export endpoint to get attachment
+    try {
+      const resp = await fetch(`/api/notes/export?journeyId=${journeyId}`, { headers: { Accept: 'text/markdown' } });
+      const text = await resp.text();
+      const blob = new Blob([text], { type: 'text/markdown' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `notes_${journeyId}.md`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
   return (
     <div style={{ padding: 12, width: 360, borderLeft: '1px solid #eee' }}>
       <h3>Notes</h3>
@@ -48,6 +69,9 @@ const NotesPanel: React.FC<{ journeyId?: string; stepId?: string; getCurrentTime
         <button onClick={createNote} disabled={!newContent.trim()}>Add note at {Math.floor(getCurrentTime())}s</button>
       </div>
       <div style={{ marginTop: 12 }}>
+        <div style={{ marginBottom: 8 }}>
+          <button onClick={exportNotes} disabled={!journeyId}>Export notes (.md)</button>
+        </div>
         {notes.map(n => (
           <div key={n.id} style={{ padding: 8, borderBottom: '1px solid #f0f0f0' }}>
             <div style={{ fontSize: 12, color: '#666' }}>{n.timestampSeconds}s</div>

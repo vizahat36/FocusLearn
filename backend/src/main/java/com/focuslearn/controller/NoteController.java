@@ -92,6 +92,27 @@ public class NoteController {
         return ResponseEntity.noContent().build();
     }
 
+    @GetMapping("/export")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<String> exportNotes(@RequestParam UUID journeyId, Principal principal) {
+        UUID userId = tryParseUUID(principal.getName());
+        // only export notes belonging to this user for the given journey
+        List<Note> notes = noteRepository.findByJourneyId(journeyId).stream()
+                .filter(n -> n.getUserId() == null || n.getUserId().equals(userId))
+                .sorted((a, b) -> Integer.compare(a.getTimestampSeconds() == null ? 0 : a.getTimestampSeconds(), b.getTimestampSeconds() == null ? 0 : b.getTimestampSeconds()))
+                .toList();
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("# Notes export\n\n");
+        for (Note n : notes) {
+            sb.append(String.format("- [%ds] %s\n\n", n.getTimestampSeconds() == null ? 0 : n.getTimestampSeconds(), n.getContent() == null ? "" : n.getContent()));
+        }
+
+        return ResponseEntity.ok()
+                .header("Content-Disposition", "attachment; filename=notes_" + journeyId + ".md")
+                .body(sb.toString());
+    }
+
     private UUID tryParseUUID(String v) {
         try {
             return UUID.fromString(v);

@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
+import { useAuth } from '../../context/AuthContext';
 
 type Toast = { id: string; message: string; type?: 'info' | 'success' | 'error' };
 
@@ -8,6 +9,21 @@ export const useToasts = () => useContext(ToastsContext);
 
 export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [toasts, setToasts] = useState<Toast[]>([]);
+  const { user } = useAuth();
+
+  useEffect(() => {
+    if (!user || !user.id) return;
+    const es = new EventSource(`/api/notifications/stream?userId=${user.id}`);
+    es.onmessage = (e) => {
+      push(e.data, 'info');
+    };
+    es.addEventListener('notification', (ev: any) => {
+      push(ev.data, 'info');
+    });
+    es.onerror = () => { es.close(); };
+    return () => es.close();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
 
   const push = (message: string, type: Toast['type'] = 'info') => {
     const t = { id: String(Date.now()) + Math.random(), message, type };

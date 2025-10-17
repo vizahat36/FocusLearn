@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.List;
 import java.util.UUID;
@@ -34,5 +35,18 @@ public class NotificationController {
         n.setMessage(req.getMessage());
         Notification saved = notificationRepository.save(n);
         return ResponseEntity.ok(saved);
+    }
+
+    // Simple SSE stream for client notifications. Clients should connect with ?userId=<uuid>
+    @GetMapping(path = "/stream", produces = "text/event-stream")
+    public SseEmitter stream(@RequestParam UUID userId) {
+        SseEmitter emitter = new SseEmitter(0L);
+        // naive: send a welcome event then keep open. In production manage emitter registry per-user.
+        try {
+            emitter.send(SseEmitter.event().name("welcome").data("connected"));
+        } catch (Exception e) {
+            // ignore
+        }
+        return emitter;
     }
 }

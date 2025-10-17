@@ -4,6 +4,8 @@ import com.focuslearn.dto.AuthDtos;
 import com.focuslearn.model.User;
 import com.focuslearn.repository.UserRepository;
 import com.focuslearn.security.JwtUtils;
+import com.focuslearn.model.RefreshToken;
+import com.focuslearn.repository.RefreshTokenRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
