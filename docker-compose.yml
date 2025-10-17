@@ -1,0 +1,34 @@
+version: '3.8'
+services:
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: focuslearn
+      POSTGRES_PASSWORD: focuslearn
+      POSTGRES_DB: focuslearn
+    ports:
+      - '5432:5432'
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+  backend:
+    build: ./backend
+    depends_on:
+      - db
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/focuslearn
+      SPRING_DATASOURCE_USERNAME: focuslearn
+      SPRING_DATASOURCE_PASSWORD: focuslearn
+      APP_JWT_SECRET: change_this_secret
+    ports:
+      - '8080:8080'
+
+  frontend:
+    build: ./frontend
+    ports:
+      - '3000:80'
+    depends_on:
+      - backend
+
+volumes:
+  db-data:

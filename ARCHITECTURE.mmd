@@ -1,0 +1,18 @@
+flowchart TD
+  subgraph FE [Frontend (React + TS)]
+    A[Browser App] -->|JWT| B[Auth Service]
+    A -->|REST| C[API Client]
+    A -->|YouTube Iframe| YT[YouTube]
+  end
+
+  subgraph BE [Backend (Spring Boot)]
+    C -->|REST| API[/api/**]
+    API --> DB[(Postgres)]
+    API --> Flyway[Flyway migrations]
+    API -->|async| Worker[Import Worker]
+  end
+
+  YT -->|Data| Worker
+  Worker --> DB
+  API -->|reads/writes| DB
+  B --> API
