@@ -9,7 +9,6 @@ CREATE TABLE users (
     created_at TIMESTAMP NOT NULL,
     updated_at TIMESTAMP
 );
-
 CREATE TABLE user_roles (
     user_id CHAR(36) NOT NULL,
     role VARCHAR(64) NOT NULL,
