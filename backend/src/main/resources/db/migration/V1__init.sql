@@ -10,6 +10,7 @@ CREATE TABLE users (
     updated_at timestamptz
 );
 
+
 CREATE TABLE user_roles (
     user_id uuid REFERENCES users(id) ON DELETE CASCADE,
     role varchar(64) NOT NULL,
