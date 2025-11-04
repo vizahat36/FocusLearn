@@ -5,6 +5,7 @@ flowchart TD
     A -->|YouTube Iframe| YT[YouTube]
   end
 
+
   subgraph BE [Backend (Spring Boot)]
     C -->|REST| API[/api/**]
     API --> DB[(Postgres)]
